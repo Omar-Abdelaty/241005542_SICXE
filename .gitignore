@@ -1,6 +1,9 @@
 .vs/
-**/obj/
-**/bin/Debug/
+x64/
+Debug/
+Release/
 *.user
-*.ilk
+*.tlog
+*.obj
 *.pdb
+*.ilk
