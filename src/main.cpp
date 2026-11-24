@@ -9,7 +9,7 @@ void parseline(const string& line, string& label, string& opcode, string& operan
 	size_t pos = 0;
 
 	//label:
-	if (line[0] != ' ' && line[0] != '\t') {
+	if (line[0] != ' ' && line[0] != '\t' && line.length() > 0) {
 		size_t spacepos = line.find_first_of(" \t");
 		if (spacepos == string::npos) {
 			label = line;
@@ -64,7 +64,7 @@ void parseline(const string& line, string& label, string& opcode, string& operan
 
 int main() {
 
-	int n = 4;
+	const int n = 4;
 	string testcode[n];
 
 	testcode[0] = "COPY		START	1000";
