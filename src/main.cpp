@@ -5,16 +5,9 @@
 #include"optab.h"
 #include"symtab.h"
 #include"littab.h"
-
-struct parsedline {
-	string label;
-	string opcode;
-	string operand;
-	int address;
-};
+#include"pass2.h"
 
 using namespace std;
-
 
 void parseline(const string& line, string& label, string& opcode, string& operand) {
 	label = opcode = operand = "";
@@ -92,7 +85,10 @@ int main() {
 	int locctr = 0;
 	string currentline;
 
-	vector<parsedline> programlines;
+	vector<ParsedLine> programlines;
+
+	int startaddress = 0;
+	string programname = "";
 
 	// read file
 	while (getline(inputFile, currentline)) {
@@ -114,6 +110,10 @@ int main() {
 		if (opcode == "START") {
 			locctr = stoi(operand, nullptr, 16); //string to integer and 16 means HEX so from string to hex
 
+			//store start address and program name
+			startaddress = locctr;
+			programname = label;
+
 			//checks for label for start (program name) and inserts it into SYMTAB
 			if (!label.empty()) {
 				insertsymbol(label, locctr);
@@ -123,7 +123,7 @@ int main() {
 			continue;
 		}
 
-		parsedline currentparsedline;
+		ParsedLine currentparsedline;
 		currentparsedline.label = label;
 		currentparsedline.opcode = opcode;
 		currentparsedline.operand = operand;
@@ -231,7 +231,24 @@ int main() {
 		else {
 			cout << "Error: [" << opcode << "]" << " is an invalid OPCODE or Directive" << endl;
 		}
+	}// end of pass 1
+
+	// find length of program
+	int programlength = locctr - startaddress;
+
+	// start pass 2
+	ObjectFile finalobj = runpass2(programlines, startaddress, programlength, programname);
+
+	//temp print function for testing
+	cout << "\n    OBJECT CODE    " << endl;
+	cout << "\n\n\n" << endl;
+	cout << finalobj.header << endl;
+
+	for (size_t i = 0; i < finalobj.text.size(); i++) {
+		cout << finalobj.text[i] << endl;
 	}
+
+	cout << finalobj.end << endl;
 
 		inputFile.close(); //close file
 		return 0;
