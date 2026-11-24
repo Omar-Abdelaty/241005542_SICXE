@@ -154,8 +154,8 @@ int main() {
 			cout << "OPERAND:	[" << operand << "]" << endl;
 			cout << "____________________________________________________" << endl;
 		}
+	}
 
 		inputFile.close(); //close file
 		return 0;
-	}
 }
