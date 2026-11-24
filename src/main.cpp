@@ -72,10 +72,10 @@ int main() {
 	initializeOPTAB();
 
 	// open file (this is a test file)
-	ifstream inputFile("test/format_test1&2.asm");
+	ifstream inputFile("test/full_format_test.asm");
 
 	if (!inputFile.is_open()) {
-		cout << "Error: Could not open format_test1&2" << endl;
+		cout << "Error: Could not open full_format_test" << endl;
 		return 1;
 	}
 

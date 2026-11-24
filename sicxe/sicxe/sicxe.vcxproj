@@ -23,6 +23,7 @@
     <ClCompile Include="..\..\src\optab.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\optab.h" />
     <ClInclude Include="optab.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
