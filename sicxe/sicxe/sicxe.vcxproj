@@ -19,11 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\littab.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\optab.cpp" />
     <ClCompile Include="..\..\src\symtab.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\littab.h" />
     <ClInclude Include="..\..\src\optab.h" />
     <ClInclude Include="..\..\src\symtab.h" />
   </ItemGroup>

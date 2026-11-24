@@ -11,7 +11,7 @@ void insertliteral(const string& literal, int address) {
 }
 
 int getliteraladdress(const string& literal) {
-	if (hasLiteral(literal)) {
+	if (hasliteral(literal)) {
 		return LITTAB[literal];
 	}
 	return -1;

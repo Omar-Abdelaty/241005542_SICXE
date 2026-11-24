@@ -1,8 +1,17 @@
 #include<iostream>
 #include<string>
 #include<fstream>
+#include<vector>
 #include"optab.h"
 #include"symtab.h"
+#include"littab.h"
+
+struct parsedline {
+	string label;
+	string opcode;
+	string operand;
+	int address;
+};
 
 using namespace std;
 
@@ -83,6 +92,8 @@ int main() {
 	int locctr = 0;
 	string currentline;
 
+	vector<parsedline> programlines;
+
 	// read file
 	while (getline(inputFile, currentline)) {
 
@@ -97,7 +108,6 @@ int main() {
 		}
 
 		string label, opcode, operand;
-
 		parseline(currentline, label, opcode, operand);
 
 		//checks if the current line is the start
@@ -111,6 +121,21 @@ int main() {
 
 			cout << "LOCCTR initialized to: 0x" << hex << locctr << dec << endl;
 			continue;
+		}
+
+		parsedline currentparsedline;
+		currentparsedline.label = label;
+		currentparsedline.opcode = opcode;
+		currentparsedline.operand = operand;
+		currentparsedline.address = locctr;
+
+		programlines.push_back(currentparsedline);
+
+		//add literals to LITTAB
+		if (!operand.empty() && operand[0] == '=') {
+			if (!hasliteral(operand)) {
+				insertliteral(operand, 0);
+			}
 		}
 
 		//checks for label to insert
@@ -178,12 +203,12 @@ int main() {
 
 			// Check for character string
 			if (operand[0] == 'C') {
-				instsize = operand.length() - 3;
+				instsize = (int)operand.length() - 3;
 			}
 
 			// Check for hex string
 			else if (operand[0] == 'X') {
-				instsize = (operand.length() - 3) / 2;
+				instsize = ((int)operand.length() - 3) / 2;
 			}
 
 			cout << "ADDR: 0x" << hex << locctr << dec << " | BYTE | Length: " << instsize << " Bytes" << endl;
@@ -194,6 +219,13 @@ int main() {
 		else if (opcode == "END") {
 			cout << "Reached END directive, Pass 1 Complete." << endl;
 			break;
+		}
+
+		// LTORG
+		else if (opcode == "LTORG") {
+			cout << "LTORG found. Allocating literals..." << endl;
+			// loop through the LITTAB map to find any literal with address 0 and assign it the current locctr, then locctr++
+			// (i will complete this loops logic later).
 		}
 
 		else {
