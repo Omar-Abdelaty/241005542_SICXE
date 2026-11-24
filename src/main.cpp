@@ -1,10 +1,8 @@
 #include<iostream>
 #include<string>
 #include<fstream>
-#include"optab.h"
 
 using namespace std;
-
 
 void parseline(const string& line, string& label, string& opcode, string& operand) {
 	label = opcode = operand = "";
@@ -67,15 +65,11 @@ void parseline(const string& line, string& label, string& opcode, string& operan
 }
 
 int main() {
-
-	//run optab
-	initializeOPTAB();
-
 	// open file (this is a test file)
-	ifstream inputFile("test/format_test1&2.asm");
+	ifstream inputFile("test/test1.asm");
 
 	if (!inputFile.is_open()) {
-		cout << "Error: Could not open format_test1&2" << endl;
+		cout << "Error: Could not open test1.asm" << endl;
 		return 1;
 	}
 
@@ -100,18 +94,9 @@ int main() {
 
 		cout << "Input:		[" << currentline << "]" << endl;
 		cout << "LABEL:		[" << label << "]" << endl;
-		cout << "OPCODE:	[" << opcode << "]" << endl;
-
-		// Test the lookup for optab
-		if (OPTAB.find(opcode) != OPTAB.end()) {
-			cout << " -> Found in OPTAB, Format: " << OPTAB[opcode].format << endl;
-		}
-		else {
-			cout << " -> Not an instruction (might be a directive)" << endl;
-		}
-
 		cout << "OPERAND:	[" << operand << "]" << endl;
-		cout << "____________________________________________________" << endl;
+		cout << "OPCODE:	[" << opcode << "]" << endl;
+		cout << "_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_" << endl;
 	}
 
 	inputFile.close(); //close file
