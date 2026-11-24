@@ -1,5 +1,6 @@
 #include<iostream>
 #include<string>
+#include<fstream>
 
 using namespace std;
 
@@ -9,7 +10,8 @@ void parseline(const string& line, string& label, string& opcode, string& operan
 	size_t pos = 0;
 
 	//label:
-	if (line[0] != ' ' && line[0] != '\t' && line.length() > 0) {
+	// length check first
+	if (line.length() > 0 && line[0] != ' ' && line[0] != '\t') {
 		size_t spacepos = line.find_first_of(" \t");
 		if (spacepos == string::npos) {
 			label = line;
@@ -63,18 +65,18 @@ void parseline(const string& line, string& label, string& opcode, string& operan
 }
 
 int main() {
+	// open file (this is a test file)
+	ifstream inputFile("test/test1.asm");
 
-	const int n = 4;
-	string testcode[n];
+	if (!inputFile.is_open()) {
+		cout << "Error: Could not open test1.asm" << endl;
+		return 1;
+	}
 
-	testcode[0] = "COPY		START	1000";
-	testcode[1] = "			LDA		=C'HELLO WORLD'";
-	testcode[2] = "// TEST COMMENT";
-	testcode[3] = ". TEST COMMENT";
+	string currentline;
 
-
-	for (int i = 0;i < n;i++) {
-		string currentline = testcode[i];
+	// read file
+	while (getline(inputFile, currentline)) {
 
 		if (currentline.empty()) {
 			continue;
@@ -94,7 +96,9 @@ int main() {
 		cout << "LABEL:		[" << label << "]" << endl;
 		cout << "OPERAND:	[" << operand << "]" << endl;
 		cout << "OPCODE:	[" << opcode << "]" << endl;
-
+		cout << "_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_" << endl;
 	}
+
+	inputFile.close(); //close file
 	return 0;
 }
