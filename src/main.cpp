@@ -80,6 +80,7 @@ int main() {
 		return 1;
 	}
 
+	int locctr = 0;
 	string currentline;
 
 	// read file
@@ -99,8 +100,6 @@ int main() {
 
 		parseline(currentline, label, opcode, operand);
 
-		int locctr = 0;
-
 		//checks if the current line is the start
 		if (opcode == "START") {
 			locctr = stoi(operand, nullptr, 16); //string to integer and 16 means HEX so from string to hex
@@ -114,22 +113,49 @@ int main() {
 			continue;
 		}
 
-		cout << "Input:		[" << currentline << "]" << endl;
-		cout << "LABEL:		[" << label << "]" << endl;
-		cout << "OPCODE:	[" << opcode << "]" << endl;
+		//checks for label to insert
+		if (!label.empty()) {
+			bool inserted = insertsymbol(label, locctr);
+			if (!inserted) {
+				cout << "Error: Duplicate symbol [" << label << "] at 0x" << hex << locctr << dec << endl;
+			}
+		}
 
-		// Test the lookup for optab
-		if (OPTAB.find(opcode) != OPTAB.end()) {
-			cout << " -> Found in OPTAB, Format: " << OPTAB[opcode].format << endl;
+		bool isxe = false; // format 4 flag
+		string searchopcode = opcode;
+
+		//check for format 4
+		if (!searchopcode.empty() && searchopcode[0] == '+') {
+			isxe = true;
+			searchopcode = searchopcode.substr(1);
+		}
+
+		int instsize = 0; //instruction size in bytes
+		if (OPTAB.find(searchopcode) != OPTAB.end()) {
+			int baseformat = OPTAB[searchopcode].format;
+
+			if (isxe && baseformat == 3) {
+				instsize = 4;
+			}
+			else {
+				instsize = baseformat;
+			}
+		}
+
+		//LOCCTR counter
+		if (instsize > 0) {
+			cout << "ADDR: 0x" << hex << locctr << dec << " | Opcode: [" << opcode << "]" << " | Length: " << instsize << " Byte(s)" << endl;
+			locctr = locctr + instsize;
 		}
 		else {
-			cout << " -> Not an instruction (might be a directive)" << endl;
+			//directive code and logic will be added here
+			cout << "Not an instruction (might be a directive): [" << opcode << "] at 0x" << hex << locctr << dec << endl;
+			cout << "LABEL:		[" << label << "]" << endl;
+			cout << "OPERAND:	[" << operand << "]" << endl;
+			cout << "____________________________________________________" << endl;
 		}
 
-		cout << "OPERAND:	[" << operand << "]" << endl;
-		cout << "____________________________________________________" << endl;
+		inputFile.close(); //close file
+		return 0;
 	}
-
-	inputFile.close(); //close file
-	return 0;
 }
