@@ -2,6 +2,7 @@
 #include<string>
 #include<fstream>
 #include"optab.h"
+#include"symtab.h"
 
 using namespace std;
 
@@ -97,6 +98,21 @@ int main() {
 		string label, opcode, operand;
 
 		parseline(currentline, label, opcode, operand);
+
+		int locctr = 0;
+
+		//checks if the current line is the start
+		if (opcode == "START") {
+			locctr = stoi(operand, nullptr, 16); //string to integer and 16 means HEX so from string to hex
+
+			//checks for label for start (program name) and inserts it into SYMTAB
+			if (!label.empty()) {
+				insertsymbol(label, locctr);
+			}
+
+			cout << "LOCCTR initialized to: 0x" << hex << locctr << dec << endl;
+			continue;
+		}
 
 		cout << "Input:		[" << currentline << "]" << endl;
 		cout << "LABEL:		[" << label << "]" << endl;
