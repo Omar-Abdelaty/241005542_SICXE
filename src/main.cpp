@@ -73,10 +73,10 @@ int main() {
 	initializeOPTAB();
 
 	// open file (this is a test file)
-	ifstream inputFile("test/full_format_test.asm");
+	ifstream inputFile("test/LOCCTR&format_test.asm");
 
 	if (!inputFile.is_open()) {
-		cout << "Error: Could not open full_format_test" << endl;
+		cout << "Error: Could not open LOCCTR&format_test" << endl;
 		return 1;
 	}
 
@@ -147,12 +147,57 @@ int main() {
 			cout << "ADDR: 0x" << hex << locctr << dec << " | Opcode: [" << opcode << "]" << " | Length: " << instsize << " Byte(s)" << endl;
 			locctr = locctr + instsize;
 		}
+
+		// directives
+
+		// WORD
+		else if (opcode == "WORD") {
+			instsize = 3;
+			cout << "ADDR: 0x" << hex << locctr << dec << " | WORD | Length: 3 Bytes" << endl;
+			locctr = locctr + instsize;
+		}
+
+		// RESW
+		else if (opcode == "RESW") {
+			int count = stoi(operand); //string to integer conversion
+			instsize = 3 * count;
+			cout << "ADDR: 0x" << hex << locctr << dec << " | RESW | Reserving: " << instsize << " Bytes" << endl;
+			locctr = locctr + instsize;
+		}
+
+		// RESB
+		else if (opcode == "RESB") {
+			int count = stoi(operand);
+			instsize = count;
+			cout << "ADDR: 0x" << hex << locctr << dec << " | RESB | Reserving: " << instsize << " Bytes" << endl;
+			locctr = locctr + instsize;
+		}
+
+		// BYTE
+		else if (opcode == "BYTE") {
+
+			// Check for character string
+			if (operand[0] == 'C') {
+				instsize = operand.length() - 3;
+			}
+
+			// Check for hex string
+			else if (operand[0] == 'X') {
+				instsize = (operand.length() - 3) / 2;
+			}
+
+			cout << "ADDR: 0x" << hex << locctr << dec << " | BYTE | Length: " << instsize << " Bytes" << endl;
+			locctr = locctr + instsize;
+		}
+
+		//END
+		else if (opcode == "END") {
+			cout << "Reached END directive, Pass 1 Complete." << endl;
+			break;
+		}
+
 		else {
-			//directive code and logic will be added here
-			cout << "Not an instruction (might be a directive): [" << opcode << "] at 0x" << hex << locctr << dec << endl;
-			cout << "LABEL:		[" << label << "]" << endl;
-			cout << "OPERAND:	[" << operand << "]" << endl;
-			cout << "____________________________________________________" << endl;
+			cout << "Error: [" << opcode << "]" << " is an invalid OPCODE or Directive" << endl;
 		}
 	}
 
