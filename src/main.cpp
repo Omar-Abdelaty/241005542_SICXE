@@ -73,10 +73,10 @@ int main() {
 	initializeOPTAB();
 
 	// open file (this is a test file)
-	ifstream inputFile("test/LOCCTR&format_test.asm");
+	ifstream inputFile("test/LOCCTR&format4_test.asm");
 
 	if (!inputFile.is_open()) {
-		cout << "Error: Could not open LOCCTR&format_test" << endl;
+		cout << "Error: Could not open LOCCTR&format4_test" << endl;
 		return 1;
 	}
 
