@@ -51,14 +51,14 @@ int getoperandaddress(string operand) {
 ObjectFile runpass2(vector<ParsedLine>& programLines, int startAddress, int programLength, string programName) {
     ObjectFile obj;
 
-    // 1. Generate Header Record
+    // Header record
     obj.header = "H^" + programName + "^" + hex(startAddress, 6) + "^" + hex(programLength, 6);
 
-    // We will accumulate our T record bytes in this string
+    // T record bytes are accumulated in this string
     string currenttextrecord = "";
     int currenttextaddress = startAddress;
 
-    // 2. Loop through every line from Pass 1
+    // loops through everyline in pass 1
     for (size_t i = 0; i < programLines.size(); i++) {
         string opcode = programLines[i].opcode;
         string operand = programLines[i].operand;
@@ -66,7 +66,7 @@ ObjectFile runpass2(vector<ParsedLine>& programLines, int startAddress, int prog
 
         // Check if it is a directive or an instruction
         if (opcode == "WORD" || opcode == "BYTE" || opcode == "RESW" || opcode == "RESB") {
-            // We will handle data generation in the next step
+            // place holder for data generation
         }
         else {
             // It's an instruction from the OPTAB
