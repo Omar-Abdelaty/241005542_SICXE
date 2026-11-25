@@ -3,7 +3,13 @@
 #include <iomanip> // hex
 #include <sstream> 
 
-// This is the helper function we designed earlier
+// helper function converts integers to 2 character HEX string
+string hex(int value, int width = 2) {
+    stringstream ss;
+    ss << hex << setfill('0') << setw(width) << value;
+    return ss.str();
+}
+
 int getoperandaddress(string operand) {
     // check for literal
     if (operand[0] == '=') {
@@ -43,22 +49,61 @@ int getoperandaddress(string operand) {
 }
 
 ObjectFile runpass2(vector<ParsedLine>& programLines, int startAddress, int programLength, string programName) {
-    ObjectFile objFile;
-    
-    //
-    //
-    // placeholder for code
-    // 
-    // 
-   
-    // 1. Generate Header Record (Placeholder)
-    objFile.header = "H^" + programName + "^000000^000000";
+    ObjectFile obj;
 
-    // 2. Generate Text Records (Placeholder)
-    objFile.text.push_back("T^000000^00^000000");
+    // 1. Generate Header Record
+    obj.header = "H^" + programName + "^" + hex(startAddress, 6) + "^" + hex(programLength, 6);
 
-    // 3. Generate End Record (Placeholder)
-    objFile.end = "E^000000";
+    // We will accumulate our T record bytes in this string
+    string currenttextrecord = "";
+    int currenttextaddress = startAddress;
 
-    return objFile;
+    // 2. Loop through every line from Pass 1
+    for (size_t i = 0; i < programLines.size(); i++) {
+        string opcode = programLines[i].opcode;
+        string operand = programLines[i].operand;
+        int address = programLines[i].address;
+
+        // Check if it is a directive or an instruction
+        if (opcode == "WORD" || opcode == "BYTE" || opcode == "RESW" || opcode == "RESB") {
+            // We will handle data generation in the next step
+        }
+        else {
+            // It's an instruction from the OPTAB
+            string searchopcode = opcode;
+            bool isformat4 = false;
+            
+            if (!searchopcode.empty() && searchopcode[0] == '+') {
+                isformat4 = true;
+                searchopcode = searchopcode.substr(1);
+            }
+
+            if (OPTAB.find(searchopcode) != OPTAB.end()) {
+                int format = OPTAB[searchopcode].format;
+                if (isformat4) format = 4;
+
+                // format 1
+                if (format == 1) {
+                    // just the opcode
+                    currenttextrecord += hex(OPTAB[searchopcode].hexCode);
+                }
+                // format 2
+                else if (format == 2) {
+                    // placeholder
+                }
+                // format 3 and 4
+                else if (format == 3 || format == 4) {
+                    // placeholder
+                }
+            }
+        }
+    }
+
+    // end record
+    obj.end = "E^" + hex(startAddress, 6);
+
+    // save text record
+    obj.text.push_back("T^" + hex(startAddress, 6) + "^" + hex(currenttextrecord.length() / 2) + "^" + currenttextrecord);
+
+    return obj;
 }

@@ -241,7 +241,7 @@ int main() {
 
 	//temp print function for testing
 	cout << "\n    OBJECT CODE    " << endl;
-	cout << "\n\n\n" << endl;
+	cout << endl;
 	cout << finalobj.header << endl;
 
 	for (size_t i = 0; i < finalobj.text.size(); i++) {
