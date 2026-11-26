@@ -4,7 +4,7 @@
 #include <sstream> 
 
 // helper function converts integers to 2 character HEX string
-string hex(int value, int width = 2) {
+string tohex(int value, int width = 2) {
     stringstream ss;
     ss << hex << setfill('0') << setw(width) << value;
     return ss.str();
@@ -52,7 +52,7 @@ ObjectFile runpass2(vector<ParsedLine>& programLines, int startAddress, int prog
     ObjectFile obj;
 
     // Header record
-    obj.header = "H^" + programName + "^" + hex(startAddress, 6) + "^" + hex(programLength, 6);
+    obj.header = "H^" + programName + "^" + tohex(startAddress, 6) + "^" + tohex(programLength, 6);
 
     // T record bytes are accumulated in this string
     string currenttextrecord = "";
@@ -85,7 +85,7 @@ ObjectFile runpass2(vector<ParsedLine>& programLines, int startAddress, int prog
                 // format 1
                 if (format == 1) {
                     // just the opcode
-                    currenttextrecord += hex(OPTAB[searchopcode].hexCode);
+                    currenttextrecord += tohex(OPTAB[searchopcode].hexCode);
                 }
                 // format 2
                 else if (format == 2) {
@@ -100,10 +100,10 @@ ObjectFile runpass2(vector<ParsedLine>& programLines, int startAddress, int prog
     }
 
     // end record
-    obj.end = "E^" + hex(startAddress, 6);
+    obj.end = "E^" + tohex(startAddress, 6);
 
     // save text record
-    obj.text.push_back("T^" + hex(startAddress, 6) + "^" + hex(currenttextrecord.length() / 2) + "^" + currenttextrecord);
+    obj.text.push_back("T^" + tohex(startAddress, 6) + "^" + tohex(currenttextrecord.length() / 2) + "^" + currenttextrecord);
 
     return obj;
 }
