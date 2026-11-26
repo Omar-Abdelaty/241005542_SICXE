@@ -155,6 +155,12 @@ ObjectFile runpass2(vector<ParsedLine>& programLines, int startAddress, int prog
                         string countStr = operand.substr(comma + 1);
 
                         r1 = getRegCode(reg);
+
+                        // Safety check
+                        if (countStr.empty()) {
+                            countStr = "0"; // prevent crash
+                        }
+
                         int count = stoi(countStr);
                         r2 = count - 1; // Encode count minus 1 in the second field
                     }
