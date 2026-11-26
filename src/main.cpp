@@ -235,10 +235,10 @@ int main() {
 
 	// find length of program
 	int programlength = locctr - startaddress;
-
+	cout << "DEBUG: Starting Pass 2..." << endl;
 	// start pass 2
 	ObjectFile finalobj = runpass2(programlines, startaddress, programlength, programname);
-
+	cout << "DEBUG: Pass 2 returned!" << endl;
 	//temp print function for testing
 	cout << "\n    OBJECT CODE    " << endl;
 	cout << endl;

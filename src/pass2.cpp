@@ -76,6 +76,7 @@ ObjectFile runpass2(vector<ParsedLine>& programLines, int startAddress, int prog
 
     // loops through everyline in pass 1
     for (size_t i = 0; i < programLines.size(); i++) {
+        cout << "DEBUG: Processing line " << i << ": [" << programLines[i].opcode << "] [" << programLines[i].operand << "]" << endl;
         string opcode = programLines[i].opcode;
         string operand = programLines[i].operand;
         int address = programLines[i].address;
