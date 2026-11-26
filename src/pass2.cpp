@@ -82,8 +82,43 @@ ObjectFile runpass2(vector<ParsedLine>& programLines, int startAddress, int prog
 
         // Check if it is a directive or an instruction
         if (opcode == "WORD" || opcode == "BYTE" || opcode == "RESW" || opcode == "RESB") {
-            // place holder for data generation
+
+            // WORD (3 bytes)
+            if (opcode == "WORD") {
+                int value = stoi(operand);
+                currenttextrecord += tohex(value, 6); // 3 bytes = 6 hex chars
+            }
+
+            // BYTE (Character or Hex string)
+            else if (opcode == "BYTE") {
+
+                // Check if it is a character string 
+                if (operand[0] == 'C') {
+
+                    // Extract the characters inside the quotes 
+                    string chars = operand.substr(2, operand.length() - 3);
+
+                    for (size_t j = 0; j < chars.length(); j++) {
+
+                        // Cast the character to an int to get its ASCII value, then to hex
+                        int asciiVal = (int)chars[j];
+                        currenttextrecord += tohex(asciiVal, 2);
+                    }
+                }
+
+                // Check if it is a hex string
+                else if (operand[0] == 'X') {
+
+                    // Extract the hex characters inside the quotes
+                    string hexChars = operand.substr(2, operand.length() - 3);
+                    currenttextrecord += hexChars;
+                }
+            }
+
+            // RESW and RESB
+            // RESW and RESB don't generate object code
         }
+
         else {
             // It's an instruction from the OPTAB
             string searchopcode = opcode;
