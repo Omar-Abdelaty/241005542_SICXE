@@ -10,6 +10,22 @@ string tohex(int value, int width = 2) {
     return ss.str();
 }
 
+// helper function that maps register names to their SIC/XE numbers
+int getRegCode(string reg) {
+
+    if (reg == "A") return 0;
+    if (reg == "X") return 1;
+    if (reg == "L") return 2;
+    if (reg == "B") return 3;
+    if (reg == "S") return 4;
+    if (reg == "T") return 5;
+    if (reg == "F") return 6;
+    if (reg == "PC") return 8;
+    if (reg == "SW") return 9;
+    
+    return -1;
+}
+
 int getoperandaddress(string operand) {
     // check for literal
     if (operand[0] == '=') {
@@ -83,14 +99,54 @@ ObjectFile runpass2(vector<ParsedLine>& programLines, int startAddress, int prog
                 if (isformat4) format = 4;
 
                 // format 1
+
                 if (format == 1) {
                     // just the opcode
                     currenttextrecord += tohex(OPTAB[searchopcode].hexCode);
                 }
+                
                 // format 2
+       
                 else if (format == 2) {
-                    // placeholder
+                    int opcodehex = OPTAB[searchopcode].hexCode;
+                    int r1 = 0;
+                    int r2 = 0;
+
+                    // SHIFTL & SHIFTR
+                    if (searchopcode == "SHIFTL" || searchopcode == "SHIFTR") {
+                        size_t comma = operand.find(',');
+                        string reg = operand.substr(0, comma);
+                        string countStr = operand.substr(comma + 1);
+
+                        r1 = getRegCode(reg);
+                        int count = stoi(countStr);
+                        r2 = count - 1; // Encode count minus 1 in the second field
+                    }
+                    // SVC 
+                    else if (searchopcode == "SVC") {
+                        r1 = stoi(operand);
+                        r2 = 0;
+                    }
+                    // CLEAR & TIXR
+                    else if (searchopcode == "CLEAR" || searchopcode == "TIXR") {
+                        r1 = getRegCode(operand);
+                        r2 = 0;
+                    }
+                    // Two registers 
+                    else {
+                        size_t comma = operand.find(',');
+                        string reg1 = operand.substr(0, comma);
+                        string reg2 = operand.substr(comma + 1);
+
+                        r1 = getRegCode(reg1);
+                        r2 = getRegCode(reg2);
+                    }
+
+                    // Combine opcode, r1, and r2 into 2 bytes (4 hex characters)
+                    int fullByte = (opcodehex << 8) | (r1 << 4) | r2;
+                    currenttextrecord += tohex(fullByte, 4);
                 }
+                
                 // format 3 and 4
                 else if (format == 3 || format == 4) {
                     // placeholder
@@ -103,7 +159,7 @@ ObjectFile runpass2(vector<ParsedLine>& programLines, int startAddress, int prog
     obj.end = "E^" + tohex(startAddress, 6);
 
     // save text record
-    obj.text.push_back("T^" + tohex(startAddress, 6) + "^" + tohex(currenttextrecord.length() / 2) + "^" + currenttextrecord);
+    obj.text.push_back("T^" + tohex(startAddress, 6) + "^" + tohex((int)currenttextrecord.length() / 2) + "^" + currenttextrecord);
 
     return obj;
 }
